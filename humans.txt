@@ -1,0 +1,17 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+    Nick
+
+# THANKS
+
+    https://www.w3schools.com/
+    https://developer.mozilla.org/
+    Various other tabs opened to remember how to do very simple things
+
+# TECHNOLOGY COLOPHON
+
+    CSS3, HTML5
+    Apache Server Configs, Modernizr, Normalize.css, main.css, Parcel

@@ -1,0 +1,318 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <title>My Big Clock</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="">
+  <meta property="og:type" content="">
+  <meta property="og:url" content="">
+  <meta property="og:image" content="">
+
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" href="icon.png">
+  <!-- Place favicon.ico in the root directory -->
+
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  
+  <!-- My Fonts --> 
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- My CSS --> 
+  <style type="text/css">
+    body {
+      background-color: black;
+    }
+    .centered {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      -webkit-transform: translate(-50%, -50%);
+      -moz-transform: translate(-50%, -50%);
+      -o-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+    }
+    #main { 
+      color: white;
+      font-family: 'Roboto', sans-serif;
+    }
+
+  </style>
+
+  <meta name="theme-color" content="#fafafa">
+</head>
+
+<body>
+  <!-- Add your site or application content here -->
+  <script src="js/vendor/modernizr-3.11.3.min.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
+  <script>
+    window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
+    ga('create', 'UA-XXXXX-Y', 'auto'); ga('set', 'anonymizeIp', true); ga('set', 'transport', 'beacon'); ga('send', 'pageview')
+  </script>
+  <script src="https://www.google-analytics.com/analytics.js" async></script>
+  
+  <!-- HTML --> 
+  <canvas id="canvas" class="centered"></canvas>
+
+  <!-- Javascript -->
+  <script>
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    var scale = 0.5;
+    canvas.width = 1200;
+    canvas.height = 278;
+    canvas.style = 'border: 0px solid white;';
+    var offColor = '#080808';
+    var onColor =  '#ff0000';
+
+    // Define which segments to turn on 
+    // for every integer 0-9
+    var segments = [
+      [1, 2, 3, 4, 5, 7],
+      [2, 3],
+      [5, 2, 6, 4, 7],
+      [5, 2, 6, 3, 7],
+      [1, 6, 2, 3],
+      [5, 1, 6, 3, 7],
+      [1, 5, 6, 4, 3, 7],
+      [5, 2, 3],
+      [1, 2, 3, 4, 5, 6, 7],
+      [5, 1, 2, 6, 3],
+    ];
+    
+    function timeToDigits(hours, mins, secs) {
+      hours = hours.toString().padStart(2, 0);
+      mins = mins.toString().padStart(2, 0);
+      secs = secs.toString().padStart(2, 0);
+      return (hours + "" + mins + "" + secs).split('');
+    }
+
+    function drawDigits(hours, mins, secs) {
+      digits = timeToDigits(hours, mins, secs);
+      for(i = 0; i < digits.length; i++) {
+        drawDigit(i, parseInt(digits[i]));
+      }
+      drawDividers();
+    }
+
+    function drawDigit(place, digit) {
+      if(digit == -1) { // Empty
+        on = [];
+      } else {
+        on = segments[digit]; // 0-9
+      }
+      ctx.save();
+      ctx.scale(scale, scale);
+      ctx.translate(place*420, 0); 
+      ctx.translate(0, 46); 
+      // Segment 1
+      on.includes(1) ? drawSegment(true) : drawSegment(false);
+      ctx.translate(234, 0);
+      // 2
+      on.includes(2) ? drawSegment(true) : drawSegment(false);
+      ctx.translate(0, 232);
+      // 3
+      on.includes(3) ? drawSegment(true) : drawSegment(false);
+      ctx.translate(-234, 0);
+      // 4
+      on.includes(4) ? drawSegment(true) : drawSegment(false);
+      ctx.translate(47, -208);
+      ctx.rotate((Math.PI/180)*270);
+      // 5
+      on.includes(5) ? drawSegment(true) : drawSegment(false);
+      ctx.translate(-233, 0);
+      // 6
+      on.includes(6) ? drawSegment(true) : drawSegment(false);
+      ctx.translate(-233, 0);
+      // 7
+      on.includes(7) ? drawSegment(true) : drawSegment(false);
+      ctx.resetTransform();
+      ctx.restore();
+    }
+
+    function drawDividers() {
+      ctx.save();
+      ctx.fillStyle = "#ff0000";
+      ctx.scale(scale, scale);
+      ctx.beginPath();
+      ctx.arc(782, 150, 30, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(782, 380, 30, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(1620, 150, 30, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(1620, 380, 30, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawSegment(on) {
+      ctx.beginPath();
+      ctx.moveTo(0, 36);
+      ctx.lineTo(36, 0);
+      ctx.lineTo(70, 36);
+      ctx.lineTo(70, 178);
+      ctx.lineTo(36, 210);
+      ctx.lineTo(0, 178);
+      ctx.fillStyle = (on ? onColor : offColor);
+      ctx.fill();      
+    }
+
+    function responsiveScale() {
+      if(window.innerWidth >= 920 && window.innerWidth < 1250) {
+        scale = 0.35;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.translate(180, 45);
+      } else if (window.innerWidth >= 650 && window.innerWidth < 920) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        scale = 0.25;
+        ctx.translate(295, 65);  
+      } else if (window.innerWidth >= 530 && window.innerWidth < 650) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        scale = 0.2;
+        ctx.translate(355, 85);
+      } else if (window.innerWidth >= 390 && window.innerWidth < 530) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        scale = 0.15;
+        ctx.translate(419, 95);
+      } else if (window.innerWidth > 310 && window.innerWidth < 390) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        scale = 0.13;
+        ctx.translate(444, 100);
+      } else if (window.innerWidth <= 310) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        scale = 0.1;
+        ctx.translate(482, 105);   
+      } else if (window.innerWidth >= 1250) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        scale = 0.5;
+      }
+    }
+
+    function setTime(hours, mins, secs) {
+      time = [hours, mins, secs];
+    }
+
+    function tickDown(hours, mins, secs) {
+      if(secs > 0) {
+        secs--;
+        return([hours, mins, secs]);
+      } else if (secs == 0) {
+        secs = 59;
+        mins--;
+        if(mins < 0) {
+          mins = 59;
+          hours--;
+          if(hours < 0) {
+            console.log('done!');
+            done = true;
+            return null;
+          }
+        }
+        return([hours, mins, secs]);
+      }
+    }
+
+    function draw() {
+      responsiveScale();
+      if(time) {
+        drawDigits(time[0], time[1], time[2]);
+        time = tickDown(time[0], time[1], time[2]);
+        // Do countdown stuff here
+      } else {
+        // Done
+        drawDigits(0, 0, 0);
+        clearInterval(drawInterval);
+      }
+      ctx.resetTransform();
+    }
+
+    window.addEventListener('resize', function() {
+      responsiveScale();
+      drawDigits(time[0], time[1], time[2]);
+      ctx.resetTransform();
+    } 
+    , false);
+    window.addEventListener('orientationchange', function() {
+      responsiveScale();
+      drawDigits(time[0], time[1], time[2]);
+      ctx.resetTransform();
+    }
+    , false);
+
+    // Default time
+    setTime(10, 10, 10);
+    
+
+    draw();
+    drawInterval = setInterval(draw, 1000);
+  
+    let isDragging = false;
+    let x = 0;
+    let y = 0;
+
+    // Add the event listeners for mousedown, mousemove, and mouseup
+    window.addEventListener('mousedown', e => {
+      x = e.offsetX;
+      y = e.offsetY;
+      isDragging = true;
+    });
+
+    window.addEventListener('mousemove', e => {
+      if (isDragging === true) {
+        console.log("Dragging");
+        x = e.offsetX;
+        y = e.offsetY;
+      }
+    });
+
+    window.addEventListener('touchstart', e => {
+      x = e.offsetX;
+      y = e.offsetY;
+      isDragging = true;
+    });
+
+    window.addEventListener('touchmove', e => {
+      if (isDragging === true) {
+        console.log("Dragging");
+        x = e.offsetX;
+        y = e.offsetY;
+      }
+    });
+
+    window.addEventListener('touchend', e => {
+      if (isDragging === true) {
+        console.log("Dragging stopped");
+        x = 0;
+        y = 0;
+        isDragging = false;
+      }
+    });     
+
+    window.addEventListener('mouseup', e => {
+      if (isDragging === true) {
+        console.log("Dragging stopped");
+        x = 0;
+        y = 0;
+        isDragging = false;
+      }
+    }); 
+
+  </script>
+
+</body>
+
+</html>
