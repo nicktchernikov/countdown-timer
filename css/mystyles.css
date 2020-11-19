@@ -1,0 +1,71 @@
+#infoMessage {
+    position:absolute;
+    width:300px;
+    height:100px;
+    bottom:0px;
+    right:25%;
+    left:50%;
+    margin-left:-150px;
+    color: #333333;
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+}
+.centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+}
+#dialog {
+  display: none;
+  font-family:'Fixedsys Excelsior 3.01';
+  font-weight: normal;
+  font-size: 16pt;
+  z-index: 1;
+  width: 50%;
+  height: 200px;
+  background-color:black;
+  border: 5px solid red;
+  padding: 10px;
+  color: white;
+}
+#startButton {
+  display: inline-block;
+  font-family:'Fixedsys Excelsior 3.01';
+  color: white;
+  border: 3px solid white;
+  cursor: pointer;
+  top: 80%;
+  padding: 4px;
+}
+#blur {
+  display: none;
+  position: absolute; 
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 0.95;
+  z-index: 0;
+}
+#inputBox {
+  margin-top: 13px;
+  width: 80%;
+  font-size: 12pt;
+  border: 1px solid white;
+  text-align: center;
+}
+.numbersInput {
+  background-color: black;
+  color: white;
+  font-size: 12pt;
+  font-family:'Fixedsys Excelsior 3.01';
+  margin: 5px;
+  padding: 5px;
+  width: 50px;
+}

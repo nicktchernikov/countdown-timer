@@ -68,7 +68,7 @@ constructor params:
     int state (0,1)
 
 <div class="clock">
-    <span class="digit">
+    <span class="digit" id="0">
         <span class="segment" data-value="0"></span>
         <span class="segment" data-value="1"></span>
         <span class="segment" data-value="0"></span>
@@ -77,7 +77,7 @@ constructor params:
         <span class="segment" data-value="1"></span>
         <span class="segment" data-value="1"></span>
     </span>
-    <span class="digit">
+    <span class="digit" id="1">
         <span class="segment" data-value="0"></span>
         <span class="segment" data-value="1"></span>
         <span class="segment" data-value="0"></span>

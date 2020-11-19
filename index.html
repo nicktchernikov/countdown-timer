@@ -18,6 +18,9 @@
 
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/mystyles.css">
+  <link rel="stylesheet" href="css/fixedFontStyles.css">
+
 
   <link rel="preconnect" href="https://fonts.gstatic.com">
   
@@ -66,12 +69,14 @@
 
   <!-- Javascript -->
   <script>
+    // Canvas settings
     var canvas = document.getElementById('canvas');
     var ctx = canvas.getContext('2d');
     var scale = 0.5;
     canvas.width = 1200;
     canvas.height = 278;
-    canvas.style = 'border: 0px solid white;';
+
+    // Colours 
     var offColor = '#080808';
     var onColor =  '#ff0000';
 
@@ -98,6 +103,7 @@
     }
 
     function drawDigits(hours, mins, secs) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       digits = timeToDigits(hours, mins, secs);
       for(i = 0; i < digits.length; i++) {
         drawDigit(i, parseInt(digits[i]));
@@ -226,20 +232,44 @@
       }
     }
 
+    function increase(hoursBy, minsBy, secsBy) {
+      time[0] += hoursBy;
+      time[1] += minsBy;
+      time[2] += secsBy;
+    }
+
     function draw() {
       responsiveScale();
       if(time) {
+        // Do countdown stuff here
         drawDigits(time[0], time[1], time[2]);
         time = tickDown(time[0], time[1], time[2]);
-        // Do countdown stuff here
       } else {
-        // Done
+        // Countdown is done
         drawDigits(0, 0, 0);
         clearInterval(drawInterval);
       }
       ctx.resetTransform();
     }
 
+    function startNew(h, m, s) {
+      if(typeof drawInterval !== 'undefined') { 
+        clearInterval(drawInterval); 
+      }
+      setTime(h, m, s);
+      draw();
+      drawInterval = setInterval(draw, 1000);
+    }
+
+    function pause() {
+      clearInterval(drawInterval);
+    }
+
+    function resume() {
+      drawInterval = setInterval(draw, 1000);
+    }
+
+    // Resizing
     window.addEventListener('resize', function() {
       responsiveScale();
       drawDigits(time[0], time[1], time[2]);
@@ -252,14 +282,8 @@
       ctx.resetTransform();
     }
     , false);
-
-    // Default time
-    setTime(10, 10, 10);
-    
-
-    draw();
-    drawInterval = setInterval(draw, 1000);
   
+    // Mouse movements
     let isDragging = false;
     let x = 0;
     let y = 0;
@@ -270,38 +294,34 @@
       y = e.offsetY;
       isDragging = true;
     });
-
     window.addEventListener('mousemove', e => {
       if (isDragging === true) {
-        console.log("Dragging");
+        console.log('Dragging...');
         x = e.offsetX;
         y = e.offsetY;
       }
     });
-
     window.addEventListener('touchstart', e => {
       x = e.offsetX;
       y = e.offsetY;
       isDragging = true;
     });
-
     window.addEventListener('touchmove', e => {
       if (isDragging === true) {
-        console.log("Dragging");
+        console.log("Touching...");
         x = e.offsetX;
         y = e.offsetY;
       }
     });
-
     window.addEventListener('touchend', e => {
       if (isDragging === true) {
-        console.log("Dragging stopped");
+        console.log("Touching stopped");
         x = 0;
         y = 0;
         isDragging = false;
       }
+      showDialog();
     });     
-
     window.addEventListener('mouseup', e => {
       if (isDragging === true) {
         console.log("Dragging stopped");
@@ -309,10 +329,82 @@
         y = 0;
         isDragging = false;
       }
+      // When mouse clicked
+      showDialog();
     }); 
+
+    var dialogOpen = false;
+    function showDialog() {
+      blur();
+      pause();
+      var dialog = document.getElementById('dialog');
+      dialog.style.display = 'block';
+    }
+
+    function closeDialog() {
+      var dialog = document.getElementById('dialog');
+      dialog.style.display = 'none';
+    }
+
+    function blur() {
+      var blur = document.getElementById('blur');
+      blur.style.display = 'block';        
+    }
+
+    function unblur() {
+      var blur = document.getElementById('blur');
+      blur.style.display =  'none';
+    }
+
+    // Init
+    setTime(0,10,0);
+    startNew(time[0], time[1], time[2]);
 
   </script>
 
+<div id="blur"></div>
+
+<div id="dialog" class="centered">
+  <div style="width: 100%; text-align: center; border: 0px solid white;"> 
+    - SET TIME -
+  </div>
+
+  <div id="inputBox">
+    <table> 
+      <tr>
+        <td>Hours</td>
+        <td>Minutes</td>
+        <td>Seconds</td>
+      </tr>
+      <tr>
+        <td><input class="numbersInput" type="number" min="0" max="99" id="hoursInput"></td>
+        <td><input class="numbersInput" type="number" min="0" max="59"  id="minutesInput"></td>
+        <td><input class="numbersInput" type="number" min="0" max="99" id="secondsInput"></td>
+      </tr>
+    </table>
+  </div>
+  <div id="startButton" class="centered">
+    START
+  </div>
+<!-- 
+  <div id="startButton" class="centered">
+    CANCEL
+  </div> -->
+
+</div>
+
+<div id="infoMessage">Click/tap screen to set new start time</div>
+
 </body>
+
+<script> 
+
+document.getElementById('startButton').onclick = function() {
+  unblur();
+  closeDialog();
+  resume();
+}
+
+</script>
 
 </html>
