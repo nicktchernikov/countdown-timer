@@ -338,12 +338,14 @@
 
     function blur() {
       var blur = document.getElementById('blur');
-      blur.style.display = 'block';        
+      blur.style.display = 'block';
+      blur.style.zIndex = 0;
     }
 
     function unblur() {
       var blur = document.getElementById('blur');
       blur.style.display =  'none';
+      blur.style.zIndex = -1;
     }
 
     // Init
@@ -398,7 +400,7 @@ document.getElementById('startButton').onclick = function() {
   var secondsInput = document.getElementById('secondsInput').value;
 
   if(minutesInput > 59 || minutesInput < 0 || secondsInput < 0 || secondsInput > 59 || hoursInput > 99 || hoursInput < 0) {
-    window.alert("Silly hours minutes or seconds values.");
+    window.alert("Fix your silly hours, minutes, or seconds values.");
   } else {
     if(hoursInput || minutesInput || secondsInput) {
       setTime(parseInt(hoursInput), parseInt(minutesInput), parseInt(secondsInput));
@@ -408,8 +410,9 @@ document.getElementById('startButton').onclick = function() {
     closeDialog();
     resume();
   }
-  
+
 }
+
 
 </script>
 
