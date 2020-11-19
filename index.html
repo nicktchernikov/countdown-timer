@@ -16,15 +16,15 @@
   <link rel="apple-touch-icon" href="icon.png">
   <!-- Place favicon.ico in the root directory -->
 
+  <!-- My Stylesheets --> 
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/mystyles.css">
+
+    <!-- My Fonts --> 
   <link rel="stylesheet" href="css/fixedFontStyles.css">
 
-
   <link rel="preconnect" href="https://fonts.gstatic.com">
-  
-  <!-- My Fonts --> 
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
   <!-- My CSS --> 
@@ -46,9 +46,7 @@
       color: white;
       font-family: 'Roboto', sans-serif;
     }
-
   </style>
-
   <meta name="theme-color" content="#fafafa">
 </head>
 
@@ -69,291 +67,7 @@
 
   <!-- Javascript -->
   <script>
-    // Canvas settings
-    var canvas = document.getElementById('canvas');
-    var ctx = canvas.getContext('2d');
-    var scale = 0.5;
-    canvas.width = 1200;
-    canvas.height = 278;
 
-    // Colours 
-    var offColor = '#080808';
-    var onColor =  '#ff0000';
-
-    // Define which segments to turn on 
-    // for every integer 0-9
-    var segments = [
-      [1, 2, 3, 4, 5, 7],
-      [2, 3],
-      [5, 2, 6, 4, 7],
-      [5, 2, 6, 3, 7],
-      [1, 6, 2, 3],
-      [5, 1, 6, 3, 7],
-      [1, 5, 6, 4, 3, 7],
-      [5, 2, 3],
-      [1, 2, 3, 4, 5, 6, 7],
-      [5, 1, 2, 6, 3],
-    ];
-    
-    function timeToDigits(hours, mins, secs) {
-      hours = hours.toString().padStart(2, 0);
-      mins = mins.toString().padStart(2, 0);
-      secs = secs.toString().padStart(2, 0);
-      return (hours + "" + mins + "" + secs).split('');
-    }
-
-    function drawDigits(hours, mins, secs) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      digits = timeToDigits(hours, mins, secs);
-      for(i = 0; i < digits.length; i++) {
-        drawDigit(i, parseInt(digits[i]));
-      }
-      drawDividers();
-    }
-
-    function drawDigit(place, digit) {
-      if(digit == -1) { // Empty
-        on = [];
-      } else {
-        on = segments[digit]; // 0-9
-      }
-      ctx.save();
-      ctx.scale(scale, scale);
-      ctx.translate(place*420, 0); 
-      ctx.translate(0, 46); 
-      // Segment 1
-      on.includes(1) ? drawSegment(true) : drawSegment(false);
-      ctx.translate(234, 0);
-      // 2
-      on.includes(2) ? drawSegment(true) : drawSegment(false);
-      ctx.translate(0, 232);
-      // 3
-      on.includes(3) ? drawSegment(true) : drawSegment(false);
-      ctx.translate(-234, 0);
-      // 4
-      on.includes(4) ? drawSegment(true) : drawSegment(false);
-      ctx.translate(47, -208);
-      ctx.rotate((Math.PI/180)*270);
-      // 5
-      on.includes(5) ? drawSegment(true) : drawSegment(false);
-      ctx.translate(-233, 0);
-      // 6
-      on.includes(6) ? drawSegment(true) : drawSegment(false);
-      ctx.translate(-233, 0);
-      // 7
-      on.includes(7) ? drawSegment(true) : drawSegment(false);
-      ctx.resetTransform();
-      ctx.restore();
-    }
-
-    function drawDividers() {
-      ctx.save();
-      ctx.fillStyle = "#ff0000";
-      ctx.scale(scale, scale);
-      ctx.beginPath();
-      ctx.arc(782, 150, 30, 0, 2 * Math.PI);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(782, 380, 30, 0, 2 * Math.PI);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(1620, 150, 30, 0, 2 * Math.PI);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(1620, 380, 30, 0, 2 * Math.PI);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    function drawSegment(on) {
-      ctx.beginPath();
-      ctx.moveTo(0, 36);
-      ctx.lineTo(36, 0);
-      ctx.lineTo(70, 36);
-      ctx.lineTo(70, 178);
-      ctx.lineTo(36, 210);
-      ctx.lineTo(0, 178);
-      ctx.fillStyle = (on ? onColor : offColor);
-      ctx.fill();      
-    }
-
-    function responsiveScale() {
-      if(window.innerWidth >= 920 && window.innerWidth < 1250) {
-        scale = 0.35;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.translate(180, 45);
-      } else if (window.innerWidth >= 650 && window.innerWidth < 920) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        scale = 0.25;
-        ctx.translate(295, 65);  
-      } else if (window.innerWidth >= 530 && window.innerWidth < 650) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        scale = 0.2;
-        ctx.translate(355, 85);
-      } else if (window.innerWidth >= 390 && window.innerWidth < 530) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        scale = 0.15;
-        ctx.translate(419, 95);
-      } else if (window.innerWidth > 310 && window.innerWidth < 390) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        scale = 0.13;
-        ctx.translate(444, 100);
-      } else if (window.innerWidth <= 310) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        scale = 0.1;
-        ctx.translate(482, 105);   
-      } else if (window.innerWidth >= 1250) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        scale = 0.5;
-      }
-    }
-
-    function setTime(hours, mins, secs) {
-      time = [hours, mins, secs];
-    }
-
-    function tickDown(hours, mins, secs) {
-      if(secs > 0) {
-        secs--;
-        return([hours, mins, secs]);
-      } else if (secs == 0) {
-        secs = 59;
-        mins--;
-        if(mins < 0) {
-          mins = 59;
-          hours--;
-          if(hours < 0) {
-            console.log('done!');
-            done = true;
-            return null;
-          }
-        }
-        return([hours, mins, secs]);
-      }
-    }
-
-    function increase(hoursBy, minsBy, secsBy) {
-      time[0] += hoursBy;
-      time[1] += minsBy;
-      time[2] += secsBy;
-    }
-
-    function draw() {
-      responsiveScale();
-      if(time) {
-        // Do countdown stuff here
-        drawDigits(time[0], time[1], time[2]);
-        time = tickDown(time[0], time[1], time[2]);
-      } else {
-        // Countdown is done
-        drawDigits(0, 0, 0);
-        clearInterval(drawInterval);
-      }
-      ctx.resetTransform();
-    }
-
-    function pause() {
-      clearInterval(window.drawInterval);
-    }
-
-    function resume() {
-      window.drawInterval = setInterval(draw, 1000);
-    }
-
-    // Resizing
-    window.addEventListener('resize', function() {
-      responsiveScale();
-      drawDigits(time[0], time[1], time[2]);
-      ctx.resetTransform();
-    } 
-    , false);
-    window.addEventListener('orientationchange', function() {
-      responsiveScale();
-      drawDigits(time[0], time[1], time[2]);
-      ctx.resetTransform();
-    }
-    , false);
-  
-    // Mouse movements
-    let isDragging = false;
-    let x = 0;
-    let y = 0;
-
-    // Add the event listeners for mousedown, mousemove, and mouseup
-    window.addEventListener('mousedown', e => {
-      x = e.offsetX;
-      y = e.offsetY;
-      isDragging = true;
-    });
-    window.addEventListener('mousemove', e => {
-      if (isDragging === true) {
-        console.log('Dragging...');
-        x = e.offsetX;
-        y = e.offsetY;
-      }
-    });
-    window.addEventListener('touchstart', e => {
-      x = e.offsetX;
-      y = e.offsetY;
-      isDragging = true;
-    });
-    window.addEventListener('touchmove', e => {
-      if (isDragging === true) {
-        console.log("Touching...");
-        x = e.offsetX;
-        y = e.offsetY;
-      }
-    });
-    window.addEventListener('touchend', e => {
-      if (isDragging === true) {
-        console.log("Touching stopped");
-        x = 0;
-        y = 0;
-        isDragging = false;
-      }
-      showDialog();
-    });     
-    window.addEventListener('mouseup', e => {
-      if (isDragging === true) {
-        console.log("Dragging stopped");
-        x = 0;
-        y = 0;
-        isDragging = false;
-      }
-      // When mouse clicked
-      showDialog();
-    }); 
-
-    function showDialog() {
-      blur();
-      pause();
-      var dialog = document.getElementById('dialog');
-      dialog.style.display = 'block';
-    }
-
-    function closeDialog() {
-      var dialog = document.getElementById('dialog');
-      dialog.style.display = 'none';
-    }
-
-    function blur() {
-      var blur = document.getElementById('blur');
-      blur.style.display = 'block';
-      blur.style.zIndex = 0;
-    }
-
-    function unblur() {
-      var blur = document.getElementById('blur');
-      blur.style.display =  'none';
-      blur.style.zIndex = -1;
-    }
-
-    // Init
-    setTime(0,10,0);
-
-    draw();
-    window.drawInterval = setInterval(draw, 1000);
-  
   </script>
 
 <div id="blur"></div>
@@ -377,8 +91,14 @@
       </tr>
     </table>
   </div>
-  <div id="startButton" class="centered">
-    START
+
+  <div id="bottomMenu" class="centered">
+    <div id="startButton">
+      START
+    </div>
+    <div id="cancelButton">
+      CANCEL
+    </div>
   </div>
 <!-- 
   <div id="startButton" class="centered">
@@ -387,33 +107,329 @@
 
 </div>
 
-<div id="infoMessage">Click/tap screen to set new start time</div>
+  <div id="infoMessage">Click/tap screen to set new start time</div>
 
 </body>
 
 <script> 
+    // Canvas settings
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    var scale = 0.5;
+    canvas.width = 1200;
+    canvas.height = 278;
 
-document.getElementById('startButton').onclick = function() {
+    // Colours 
+    var offColor = '#080808';
+      var onColor =  '#ff0000';
 
-  var hoursInput = document.getElementById('hoursInput').value;
-  var minutesInput = document.getElementById('minutesInput').value;
-  var secondsInput = document.getElementById('secondsInput').value;
+      // Define which segments to turn on 
+      // for every integer 0-9
+      var segments = [
+        [1, 2, 3, 4, 5, 7],
+        [2, 3],
+        [5, 2, 6, 4, 7],
+        [5, 2, 6, 3, 7],
+        [1, 6, 2, 3],
+        [5, 1, 6, 3, 7],
+        [1, 5, 6, 4, 3, 7],
+        [5, 2, 3],
+        [1, 2, 3, 4, 5, 6, 7],
+        [5, 1, 2, 6, 3],
+      ];
+      
+      function timeToDigits(hours, mins, secs) {
+        hours = hours.toString().padStart(2, 0);
+        mins = mins.toString().padStart(2, 0);
+        secs = secs.toString().padStart(2, 0);
+        return (hours + "" + mins + "" + secs).split('');
+      }
 
-  if(minutesInput > 59 || minutesInput < 0 || secondsInput < 0 || secondsInput > 59 || hoursInput > 99 || hoursInput < 0) {
-    window.alert("Fix your silly hours, minutes, or seconds values.");
-  } else {
-    if(hoursInput || minutesInput || secondsInput) {
-      setTime(parseInt(hoursInput), parseInt(minutesInput), parseInt(secondsInput));
+      function drawDigits(hours, mins, secs) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        digits = timeToDigits(hours, mins, secs);
+        for(i = 0; i < digits.length; i++) {
+          drawDigit(i, parseInt(digits[i]));
+        }
+        drawDividers();
+      }
+
+      function drawDigit(place, digit) {
+        if(digit == -1) { // Empty
+          on = [];
+        } else {
+          on = segments[digit]; // 0-9
+        }
+        ctx.save();
+        ctx.scale(scale, scale);
+        ctx.translate(place*420, 0); 
+        ctx.translate(0, 46); 
+        // Segment 1
+        on.includes(1) ? drawSegment(true) : drawSegment(false);
+        ctx.translate(234, 0);
+        // 2
+        on.includes(2) ? drawSegment(true) : drawSegment(false);
+        ctx.translate(0, 232);
+        // 3
+        on.includes(3) ? drawSegment(true) : drawSegment(false);
+        ctx.translate(-234, 0);
+        // 4
+        on.includes(4) ? drawSegment(true) : drawSegment(false);
+        ctx.translate(47, -208);
+        ctx.rotate((Math.PI/180)*270);
+        // 5
+        on.includes(5) ? drawSegment(true) : drawSegment(false);
+        ctx.translate(-233, 0);
+        // 6
+        on.includes(6) ? drawSegment(true) : drawSegment(false);
+        ctx.translate(-233, 0);
+        // 7
+        on.includes(7) ? drawSegment(true) : drawSegment(false);
+        ctx.resetTransform();
+        ctx.restore();
+      }
+
+      function drawDividers() {
+        ctx.save();
+        ctx.fillStyle = "#ff0000";
+        ctx.scale(scale, scale);
+        ctx.beginPath();
+        ctx.arc(782, 150, 30, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(782, 380, 30, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(1620, 150, 30, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(1620, 380, 30, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawSegment(on) {
+        ctx.beginPath();
+        ctx.moveTo(0, 36);
+        ctx.lineTo(36, 0);
+        ctx.lineTo(70, 36);
+        ctx.lineTo(70, 178);
+        ctx.lineTo(36, 210);
+        ctx.lineTo(0, 178);
+        ctx.fillStyle = (on ? onColor : offColor);
+        ctx.fill();      
+      }
+
+      function responsiveScale() {
+        if(window.innerWidth >= 920 && window.innerWidth < 1250) {
+          scale = 0.35;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.translate(180, 45);
+        } else if (window.innerWidth >= 650 && window.innerWidth < 920) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          scale = 0.25;
+          ctx.translate(295, 65);  
+        } else if (window.innerWidth >= 530 && window.innerWidth < 650) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          scale = 0.2;
+          ctx.translate(355, 85);
+        } else if (window.innerWidth >= 390 && window.innerWidth < 530) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          scale = 0.15;
+          ctx.translate(419, 95);
+        } else if (window.innerWidth > 310 && window.innerWidth < 390) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          scale = 0.13;
+          ctx.translate(444, 100);
+        } else if (window.innerWidth <= 310) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          scale = 0.1;
+          ctx.translate(482, 105);   
+        } else if (window.innerWidth >= 1250) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          scale = 0.5;
+        }
+      }
+
+      function setTime(hours, mins, secs) {
+        time = [hours, mins, secs];
+      }
+
+      function tickDown(hours, mins, secs) {
+        if(secs > 0) {
+          secs--;
+          return([hours, mins, secs]);
+        } else if (secs == 0) {
+          secs = 59;
+          mins--;
+          if(mins < 0) {
+            mins = 59;
+            hours--;
+            if(hours < 0) {
+              console.log('done!');
+              done = true;
+              return null;
+            }
+          }
+          return([hours, mins, secs]);
+        }
+      }
+
+      function increase(hoursBy, minsBy, secsBy) {
+        time[0] += hoursBy;
+        time[1] += minsBy;
+        time[2] += secsBy;
+      }
+
+      function draw() {
+        responsiveScale();
+        if(time) {
+          // Do countdown stuff here
+          drawDigits(time[0], time[1], time[2]);
+          time = tickDown(time[0], time[1], time[2]);
+        } else {
+          // Countdown is done
+          drawDigits(0, 0, 0);
+          clearInterval(drawInterval);
+        }
+        ctx.resetTransform();
+      }
+
+      function pause() {
+        clearInterval(window.drawInterval);
+      }
+
+      function resume() {
+        window.drawInterval = setInterval(draw, 1000);
+      }
+
+      // Resizing
+      window.addEventListener('resize', function() {
+        responsiveScale();
+        drawDigits(time[0], time[1], time[2]);
+        ctx.resetTransform();
+      } 
+      , false);
+      window.addEventListener('orientationchange', function() {
+        responsiveScale();
+        drawDigits(time[0], time[1], time[2]);
+        ctx.resetTransform();
+      }
+      , false);
+    
+      // Mouse movements
+      let isDragging = false;
+      let x = 0;
+      let y = 0;
+
+      // Add the event listeners for mousedown, mousemove, and mouseup
+      window.addEventListener('mousedown', e => {
+        x = e.offsetX;
+        y = e.offsetY;
+        isDragging = true;
+      });
+      window.addEventListener('mousemove', e => {
+        if (isDragging === true) {
+          console.log('Dragging...');
+          x = e.offsetX;
+          y = e.offsetY;
+        }
+      });
+      window.addEventListener('touchstart', e => {
+        x = e.offsetX;
+        y = e.offsetY;
+        isDragging = true;
+      });
+      window.addEventListener('touchmove', e => {
+        if (isDragging === true) {
+          console.log("Touching...");
+          x = e.offsetX;
+          y = e.offsetY;
+        }
+      });
+      window.addEventListener('touchend', e => {
+        if (isDragging === true) {
+          console.log("Touching stopped");
+          x = 0;
+          y = 0;
+          isDragging = false;
+        }
+        showDialog();
+      });     
+      window.addEventListener('mouseup', e => {
+        if (isDragging === true) {
+          console.log("Dragging stopped");
+          x = 0;
+          y = 0;
+          isDragging = false;
+        }
+        // When mouse clicked
+        showDialog();
+      }); 
+
+      function showDialog() {
+        blur();
+        pause();
+        var dialog = document.getElementById('dialog');
+        dialog.style.display = 'block';
+      }
+
+      function closeDialog() {
+        var dialog = document.getElementById('dialog');
+        dialog.style.display = 'none';
+      }
+
+      function blur() {
+        var blur = document.getElementById('blur');
+        blur.style.display = 'block';
+        blur.style.zIndex = 0;
+      }
+
+      function unblur() {
+        var blur = document.getElementById('blur');
+        blur.style.display =  'none';
+        blur.style.zIndex = -1;
+      }
+
+      // Init
+      setTime(0,10,0);
+
       draw();
+      window.drawInterval = setInterval(draw, 1000);
+    
+    document.getElementById('startButton').onclick = function() {
+      var hoursInput = document.getElementById('hoursInput').value;
+      var minutesInput = document.getElementById('minutesInput').value;
+      var secondsInput = document.getElementById('secondsInput').value;
+
+      if(!hoursInput) hoursInput = 0;
+      if(!minutesInput) minutesInput = 0;
+      if(!secondsInput) secondsInput = 0;
+
+      if(minutesInput > 59 || minutesInput < 0 || secondsInput < 0 || secondsInput > 59 || hoursInput > 99 || hoursInput < 0) {
+        window.alert("Hours range is 0-99. \nMinutes and seconds range is 0-59.");
+      } else {
+        if(hoursInput || minutesInput || secondsInput) {
+          setTime(parseInt(hoursInput), parseInt(minutesInput), parseInt(secondsInput));
+          draw();
+        }
+        unblur();
+        closeDialog();
+        resume();
+      }
     }
-    unblur();
-    closeDialog();
-    resume();
-  }
+    document.getElementById('cancelButton').onclick = function() {
+      console.log('Cancel');
+      unblur();
+      closeDialog();
+      resume();
+    }
+  
+    // TODO 
+    // * ENTER key
+    // * GO Button on Mobile
+    // * Persistence of countdown time if user leaves page
 
-}
-
-
-</script>
+  </script>
 
 </html>

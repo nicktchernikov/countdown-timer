@@ -39,7 +39,14 @@
   color: white;
   border: 3px solid white;
   cursor: pointer;
-  top: 80%;
+  padding: 4px;
+}
+#cancelButton {
+  display: inline-block;
+  font-family:'Fixedsys Excelsior 3.01';
+  color: white;
+  border: 3px solid white;
+  cursor: pointer;
   padding: 4px;
 }
 #blur {
@@ -74,4 +81,8 @@
 table#inputTable {
   margin: 0 auto;
   border: 0px solid white;
+}
+
+#bottomMenu {
+  top: 80%;
 }
