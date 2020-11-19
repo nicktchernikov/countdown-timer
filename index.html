@@ -252,21 +252,12 @@
       ctx.resetTransform();
     }
 
-    function startNew(h, m, s) {
-      if(typeof drawInterval !== 'undefined') { 
-        clearInterval(drawInterval); 
-      }
-      setTime(h, m, s);
-      draw();
-      drawInterval = setInterval(draw, 1000);
-    }
-
     function pause() {
-      clearInterval(drawInterval);
+      clearInterval(window.drawInterval);
     }
 
     function resume() {
-      drawInterval = setInterval(draw, 1000);
+      window.drawInterval = setInterval(draw, 1000);
     }
 
     // Resizing
@@ -333,7 +324,6 @@
       showDialog();
     }); 
 
-    var dialogOpen = false;
     function showDialog() {
       blur();
       pause();
@@ -358,8 +348,10 @@
 
     // Init
     setTime(0,10,0);
-    startNew(time[0], time[1], time[2]);
 
+    draw();
+    window.drawInterval = setInterval(draw, 1000);
+  
   </script>
 
 <div id="blur"></div>
@@ -370,7 +362,7 @@
   </div>
 
   <div id="inputBox">
-    <table> 
+    <table id="inputTable"> 
       <tr>
         <td>Hours</td>
         <td>Minutes</td>
@@ -400,9 +392,23 @@
 <script> 
 
 document.getElementById('startButton').onclick = function() {
-  unblur();
-  closeDialog();
-  resume();
+
+  var hoursInput = document.getElementById('hoursInput').value;
+  var minutesInput = document.getElementById('minutesInput').value;
+  var secondsInput = document.getElementById('secondsInput').value;
+
+  if(minutesInput > 59 || minutesInput < 0 || secondsInput < 0 || secondsInput > 59 || hoursInput > 99 || hoursInput < 0) {
+    window.alert("Silly hours minutes or seconds values.");
+  } else {
+    if(hoursInput || minutesInput || secondsInput) {
+      setTime(parseInt(hoursInput), parseInt(minutesInput), parseInt(secondsInput));
+      draw();
+    }
+    unblur();
+    closeDialog();
+    resume();
+  }
+  
 }
 
 </script>

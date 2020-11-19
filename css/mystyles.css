@@ -1,3 +1,13 @@
+.centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+}
 #infoMessage {
     position:absolute;
     width:300px;
@@ -10,23 +20,13 @@
     text-align: center;
     font-family: 'Roboto', sans-serif;
 }
-.centered {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-}
 #dialog {
   display: none;
   font-family:'Fixedsys Excelsior 3.01';
   font-weight: normal;
   font-size: 16pt;
   z-index: 1;
-  width: 50%;
+  width: 75%;
   height: 200px;
   background-color:black;
   border: 5px solid red;
@@ -54,11 +54,12 @@
   z-index: 0;
 }
 #inputBox {
-  margin-top: 13px;
-  width: 80%;
-  font-size: 12pt;
-  border: 1px solid white;
+  margin: 0 auto;
+  margin-top: 20px;
+  width: 98%;
   text-align: center;
+  font-size: 12pt;
+  border: 0px solid white;
 }
 .numbersInput {
   background-color: black;
@@ -68,4 +69,9 @@
   margin: 5px;
   padding: 5px;
   width: 50px;
+}
+
+table#inputTable {
+  margin: 0 auto;
+  border: 0px solid white;
 }
