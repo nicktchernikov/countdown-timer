@@ -424,11 +424,21 @@
       closeDialog();
       resume();
     }
-  
+
+    try {
+      const wakeLock = await navigator.wakeLock.request('screen');
+    } catch (err) {
+      // the wake lock request fails - usually system related, such being low on battery
+      console.log(`${err.name}, ${err.message}`);
+    }  
+      
     // TODO 
-    // * ENTER key
-    // * GO Button on Mobile
-    // * Persistence of countdown time if user leaves page
+    // * ENTER key to start countdown
+    // * GO Button on Mobile to start countdown
+    // * Persistence of countdown time if user leaves/comes back
+    // * Set an actual clock with actual time
+    // * Prevent screen from turning off (?)
+    // * Full screen mode
 
   </script>
 
