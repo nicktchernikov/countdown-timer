@@ -425,13 +425,17 @@
       resume();
     }
 
-    try {
-      const wakeLock = await navigator.wakeLock.request('screen');
-    } catch (err) {
-      // the wake lock request fails - usually system related, such being low on battery
-      console.log(`${err.name}, ${err.message}`);
-    }  
-      
+    async function wakeLock() {
+      try {
+        const wakeLock = await navigator.wakeLock.request('screen');
+        console.log('started wakeLock');
+      } catch (err) {
+        // the wake lock request fails - usually system related, such being low on battery
+        console.log(`${err.name}, ${err.message}`);
+      }  
+    }
+    wakeLock();
+
     // TODO 
     // * ENTER key to start countdown
     // * GO Button on Mobile to start countdown
