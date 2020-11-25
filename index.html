@@ -466,13 +466,15 @@
     async function wakeLock() {
       try {
         const wakeLock = await navigator.wakeLock.request('screen');
-        console.log('started wakeLock');
+        console.log('Started wakeLock');
       } catch (err) {
         // the wake lock request fails - usually system related, such being low on battery
         console.log(`${err.name}, ${err.message}`);
       }  
     }
     wakeLock();
+    // In case user reloads the page
+    setInterval(wakeLock, 1000); 
 
     // Fullscreen
     fullscreenOpen = false;
@@ -510,14 +512,6 @@
         document.getElementById('fullscreenButton').innerText = "CLOSE FULLSCREEN"; 
       }
     }
-
-    // TODO 
-    // * [done] ENTER key to start countdown
-    // * GO Button on Mobile to start countdown
-    // * Persistence of countdown time if user leaves/comes back
-    // * Set an actual clock with actual time
-    // * Prevent screen from turning off (?)
-    // * Full screen mode
 
   </script>
 
