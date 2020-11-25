@@ -43,7 +43,7 @@
       -o-transform: translate(-50%, -50%);
       -ms-transform: translate(-50%, -50%);
     }
-    #fullScreenButton {
+    #fullscreenButton {
       font-family: 'Fixedsys Excelsior 3.01';
       color: white;
       opacity: 50%;
@@ -73,7 +73,7 @@
   
 <!-- HTML --> 
 <canvas id="canvas" class="centered"></canvas>
-<div id="fullScreenButton">FULLSCREEN</div>
+<div id="fullscreenButton">FULLSCREEN</div>
 <div id="blur"></div>
 
 <div id="dialog" class="centered">
@@ -466,7 +466,10 @@
         el.webkitRequestFullscreen();
       } else if(el.msRequestFullscreen) {
         el.msRequestFullscreen();
-      }
+      }  
+    }
+    document.getElementById("fullscreenButton").onclick = function() {
+      openFullscreen();
     }
 
     // TODO 
