@@ -50,9 +50,20 @@
       padding: 10px; 
       float: right;
       cursor: pointer;
+      font-size: 10pt;
     }
     #goButton {
       display: none;
+    }
+    #fakeScreen {
+      display: none;
+      position: absolute; 
+      top: 0px;
+      left: 0px;
+      width: 100%;
+      height: 100%;
+      background-color: red;
+      z-index: 5;
     }
   </style>
   <meta name="theme-color" content="#fafafa">
@@ -73,7 +84,8 @@
   
 <!-- HTML --> 
 <canvas id="canvas" class="centered"></canvas>
-<div id="fullscreenButton">FULLSCREEN</div>
+<div id="fullscreenButton">OPEN FULLSCREEN</div>
+<div id="fakeScreen"></div>
 <div id="blur"></div>
 
 <div id="dialog" class="centered">
@@ -99,7 +111,7 @@
       START
     </div>
     <div id="cancelButton">
-      CANCEL
+      CLOSE 
     </div>
     <form>
       <input id="goButton" type="submit"></input>
@@ -121,287 +133,292 @@
 
     // Colours 
     var offColor = '#080808';
-      var onColor =  '#ff0000';
+    var onColor =  '#ff0000';
 
-      // Define which segments to turn on 
-      // for every integer 0-9
-      var segments = [
-        [1, 2, 3, 4, 5, 7],
-        [2, 3],
-        [5, 2, 6, 4, 7],
-        [5, 2, 6, 3, 7],
-        [1, 6, 2, 3],
-        [5, 1, 6, 3, 7],
-        [1, 5, 6, 4, 3, 7],
-        [5, 2, 3],
-        [1, 2, 3, 4, 5, 6, 7],
-        [5, 1, 2, 6, 3],
-      ];
+    // Define which segments to turn on 
+    // for every integer 0-9
+    var segments = [
+      [1, 2, 3, 4, 5, 7],
+      [2, 3],
+      [5, 2, 6, 4, 7],
+      [5, 2, 6, 3, 7],
+      [1, 6, 2, 3],
+      [5, 1, 6, 3, 7],
+      [1, 5, 6, 4, 3, 7],
+      [5, 2, 3],
+      [1, 2, 3, 4, 5, 6, 7],
+      [5, 1, 2, 6, 3],
+    ];
       
-      function timeToDigits(hours, mins, secs) {
-        hours = hours.toString().padStart(2, 0);
-        mins = mins.toString().padStart(2, 0);
-        secs = secs.toString().padStart(2, 0);
-        return (hours + "" + mins + "" + secs).split('');
-      }
+    function timeToDigits(hours, mins, secs) {
+      hours = hours.toString().padStart(2, 0);
+      mins = mins.toString().padStart(2, 0);
+      secs = secs.toString().padStart(2, 0);
+      return (hours + "" + mins + "" + secs).split('');
+    }
 
-      function drawDigits(hours, mins, secs) {
+    function drawDigits(hours, mins, secs) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      digits = timeToDigits(hours, mins, secs);
+      for(i = 0; i < digits.length; i++) {
+        drawDigit(i, parseInt(digits[i]));
+      }
+      drawDividers();
+    }
+
+    function drawDigit(place, digit) {
+      if(digit == -1) { // Empty
+        on = [];
+      } else {
+        on = segments[digit]; // 0-9
+      }
+      ctx.save();
+      ctx.scale(scale, scale);
+      ctx.translate(place*420, 0); 
+      ctx.translate(0, 46); 
+      // Segment 1
+      on.includes(1) ? drawSegment(true) : drawSegment(false);
+      ctx.translate(234, 0);
+      // 2
+      on.includes(2) ? drawSegment(true) : drawSegment(false);
+      ctx.translate(0, 232);
+      // 3
+      on.includes(3) ? drawSegment(true) : drawSegment(false);
+      ctx.translate(-234, 0);
+      // 4
+      on.includes(4) ? drawSegment(true) : drawSegment(false);
+      ctx.translate(47, -208);
+      ctx.rotate((Math.PI/180)*270);
+      // 5
+      on.includes(5) ? drawSegment(true) : drawSegment(false);
+      ctx.translate(-233, 0);
+      // 6
+      on.includes(6) ? drawSegment(true) : drawSegment(false);
+      ctx.translate(-233, 0);
+      // 7
+      on.includes(7) ? drawSegment(true) : drawSegment(false);
+      ctx.resetTransform();
+      ctx.restore();
+    }
+
+    function drawDividers() {
+      ctx.save();
+      ctx.fillStyle = "#ff0000";
+      ctx.scale(scale, scale);
+      ctx.beginPath();
+      ctx.arc(782, 150, 30, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(782, 380, 30, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(1620, 150, 30, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(1620, 380, 30, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawSegment(on) {
+      ctx.beginPath();
+      ctx.moveTo(0, 36);
+      ctx.lineTo(36, 0);
+      ctx.lineTo(70, 36);
+      ctx.lineTo(70, 178);
+      ctx.lineTo(36, 210);
+      ctx.lineTo(0, 178);
+      ctx.fillStyle = (on ? onColor : offColor);
+      ctx.fill();      
+    }
+
+    function responsiveScale() {
+      if(window.innerWidth >= 920 && window.innerWidth < 1250) {
+        scale = 0.35;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        digits = timeToDigits(hours, mins, secs);
-        for(i = 0; i < digits.length; i++) {
-          drawDigit(i, parseInt(digits[i]));
-        }
-        drawDividers();
+        ctx.translate(180, 45);
+      } else if (window.innerWidth >= 650 && window.innerWidth < 920) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        scale = 0.25;
+        ctx.translate(295, 65);  
+      } else if (window.innerWidth >= 530 && window.innerWidth < 650) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        scale = 0.2;
+        ctx.translate(355, 85);
+      } else if (window.innerWidth >= 390 && window.innerWidth < 530) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        scale = 0.15;
+        ctx.translate(419, 95);
+      } else if (window.innerWidth > 310 && window.innerWidth < 390) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        scale = 0.13;
+        ctx.translate(444, 100);
+      } else if (window.innerWidth <= 310) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        scale = 0.1;
+        ctx.translate(482, 105);   
+      } else if (window.innerWidth >= 1250) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        scale = 0.5;
       }
+    }
 
-      function drawDigit(place, digit) {
-        if(digit == -1) { // Empty
-          on = [];
-        } else {
-          on = segments[digit]; // 0-9
-        }
-        ctx.save();
-        ctx.scale(scale, scale);
-        ctx.translate(place*420, 0); 
-        ctx.translate(0, 46); 
-        // Segment 1
-        on.includes(1) ? drawSegment(true) : drawSegment(false);
-        ctx.translate(234, 0);
-        // 2
-        on.includes(2) ? drawSegment(true) : drawSegment(false);
-        ctx.translate(0, 232);
-        // 3
-        on.includes(3) ? drawSegment(true) : drawSegment(false);
-        ctx.translate(-234, 0);
-        // 4
-        on.includes(4) ? drawSegment(true) : drawSegment(false);
-        ctx.translate(47, -208);
-        ctx.rotate((Math.PI/180)*270);
-        // 5
-        on.includes(5) ? drawSegment(true) : drawSegment(false);
-        ctx.translate(-233, 0);
-        // 6
-        on.includes(6) ? drawSegment(true) : drawSegment(false);
-        ctx.translate(-233, 0);
-        // 7
-        on.includes(7) ? drawSegment(true) : drawSegment(false);
-        ctx.resetTransform();
-        ctx.restore();
-      }
+    function setTime(hours, mins, secs) {
+      time = [hours, mins, secs];
+    }
 
-      function drawDividers() {
-        ctx.save();
-        ctx.fillStyle = "#ff0000";
-        ctx.scale(scale, scale);
-        ctx.beginPath();
-        ctx.arc(782, 150, 30, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(782, 380, 30, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(1620, 150, 30, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(1620, 380, 30, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.restore();
-      }
-
-      function drawSegment(on) {
-        ctx.beginPath();
-        ctx.moveTo(0, 36);
-        ctx.lineTo(36, 0);
-        ctx.lineTo(70, 36);
-        ctx.lineTo(70, 178);
-        ctx.lineTo(36, 210);
-        ctx.lineTo(0, 178);
-        ctx.fillStyle = (on ? onColor : offColor);
-        ctx.fill();      
-      }
-
-      function responsiveScale() {
-        if(window.innerWidth >= 920 && window.innerWidth < 1250) {
-          scale = 0.35;
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.translate(180, 45);
-        } else if (window.innerWidth >= 650 && window.innerWidth < 920) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          scale = 0.25;
-          ctx.translate(295, 65);  
-        } else if (window.innerWidth >= 530 && window.innerWidth < 650) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          scale = 0.2;
-          ctx.translate(355, 85);
-        } else if (window.innerWidth >= 390 && window.innerWidth < 530) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          scale = 0.15;
-          ctx.translate(419, 95);
-        } else if (window.innerWidth > 310 && window.innerWidth < 390) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          scale = 0.13;
-          ctx.translate(444, 100);
-        } else if (window.innerWidth <= 310) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          scale = 0.1;
-          ctx.translate(482, 105);   
-        } else if (window.innerWidth >= 1250) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          scale = 0.5;
-        }
-      }
-
-      function setTime(hours, mins, secs) {
-        time = [hours, mins, secs];
-      }
-
-      function tickDown(hours, mins, secs) {
-        if(secs > 0) {
-          secs--;
-          return([hours, mins, secs]);
-        } else if (secs == 0) {
-          secs = 59;
-          mins--;
-          if(mins < 0) {
-            mins = 59;
-            hours--;
-            if(hours < 0) {
-              console.log('done!');
-              done = true;
-              return null;
-            }
+    function tickDown(hours, mins, secs) {
+      if(secs > 0) {
+        secs--;
+        return([hours, mins, secs]);
+      } else if (secs == 0) {
+        secs = 59;
+        mins--;
+        if(mins < 0) {
+          mins = 59;
+          hours--;
+          if(hours < 0) {
+            console.log('done!');
+            done = true;
+            return null;
           }
-          return([hours, mins, secs]);
         }
+        return([hours, mins, secs]);
       }
+    }
 
-      function increase(hoursBy, minsBy, secsBy) {
-        time[0] += hoursBy;
-        time[1] += minsBy;
-        time[2] += secsBy;
-      }
+    function increase(hoursBy, minsBy, secsBy) {
+      time[0] += hoursBy;
+      time[1] += minsBy;
+      time[2] += secsBy;
+    }
 
-      function draw() {
-        responsiveScale();
-        if(time) {
-          // Do countdown stuff here
-          drawDigits(time[0], time[1], time[2]);
-          time = tickDown(time[0], time[1], time[2]);
-        } else {
-          // Countdown is done
-          drawDigits(0, 0, 0);
-          clearInterval(drawInterval);
-        }
-        ctx.resetTransform();
-      }
-
-      function pause() {
-        clearInterval(window.drawInterval);
-      }
-
-      function resume() {
-        window.drawInterval = setInterval(draw, 1000);
-      }
-
-      // Resizing
-      window.addEventListener('resize', function() {
-        responsiveScale();
+    function draw() {
+      responsiveScale();
+      if(time) {
+        // Do countdown stuff here
         drawDigits(time[0], time[1], time[2]);
-        ctx.resetTransform();
-      } 
-      , false);
-      window.addEventListener('orientationchange', function() {
-        responsiveScale();
-        drawDigits(time[0], time[1], time[2]);
-        ctx.resetTransform();
+        time = tickDown(time[0], time[1], time[2]);
+      } else {
+        // Countdown is done
+        drawDigits(0, 0, 0);
+        clearInterval(drawInterval);
       }
-      , false);
-    
-      // Mouse movements
-      let isDragging = false;
-      let x = 0;
-      let y = 0;
+      ctx.resetTransform();
+    }
 
-      // Add the event listeners for mousedown, mousemove, and mouseup
-      window.addEventListener('mousedown', e => {
-        x = e.offsetX;
-        y = e.offsetY;
-        isDragging = true;
-      });
-      window.addEventListener('mousemove', e => {
-        if (isDragging === true) {
-          console.log('Dragging...');
-          x = e.offsetX;
-          y = e.offsetY;
-        }
-      });
-      window.addEventListener('touchstart', e => {
-        x = e.offsetX;
-        y = e.offsetY;
-        isDragging = true;
-      });
-      window.addEventListener('touchmove', e => {
-        if (isDragging === true) {
-          console.log("Touching...");
-          x = e.offsetX;
-          y = e.offsetY;
-        }
-      });
-      window.addEventListener('touchend', e => {
-        if (isDragging === true) {
-          console.log("Touching stopped");
-          x = 0;
-          y = 0;
-          isDragging = false;
-        }
-        showDialog();
-      });     
-      window.addEventListener('mouseup', e => {
-        if (isDragging === true) {
-          console.log("Dragging stopped");
-          x = 0;
-          y = 0;
-          isDragging = false;
-        }
-        console.log(e.screenX, e.screenY, window.innerWidth, window.innerHeight);
-        
-        // When mouse clicked
-        if(e.clientX < (window.innerWidth - 100) 
-        && e.clientY < (window.innerHeight + 100)) { // make sure it's not Fullscreen button click
-          console.log('passed');   
-          showDialog();
-        }
-      }); 
+    function pause() {
+      clearInterval(window.drawInterval);
+    }
 
-      function showDialog() {
-        blur();
-        pause();
-        var dialog = document.getElementById('dialog');
-        dialog.style.display = 'block';
-      }
-
-      function closeDialog() {
-        var dialog = document.getElementById('dialog');
-        dialog.style.display = 'none';
-      }
-
-      function blur() {
-        var blur = document.getElementById('blur');
-        blur.style.display = 'block';
-        blur.style.zIndex = 0;
-      }
-
-      function unblur() {
-        var blur = document.getElementById('blur');
-        blur.style.display =  'none';
-        blur.style.zIndex = -1;
-      }
-
-      // Init
-      setTime(0,10,0);
-
-      draw();
+    function resume() {
       window.drawInterval = setInterval(draw, 1000);
+    }
+
+    // Resizing
+    window.addEventListener('resize', function() {
+      responsiveScale();
+      drawDigits(time[0], time[1], time[2]);
+      ctx.resetTransform();
+    } 
+    , false);
+    window.addEventListener('orientationchange', function() {
+      responsiveScale();
+      drawDigits(time[0], time[1], time[2]);
+      ctx.resetTransform();
+    }
+    , false);
+  
+    // Mouse movements
+    let isDragging = false;
+    let x = 0;
+    let y = 0;
+
+    // Add the event listeners for mousedown, mousemove, and mouseup
+    window.addEventListener('mousedown', e => {
+      x = e.offsetX;
+      y = e.offsetY;
+      isDragging = true;
+    });
+    window.addEventListener('mousemove', e => {
+      if (isDragging === true) {
+        console.log('Dragging...');
+        x = e.offsetX;
+        y = e.offsetY;
+      }
+    });
+    window.addEventListener('touchstart', e => {
+      x = e.offsetX;
+      y = e.offsetY;
+      isDragging = true;
+    });
+    window.addEventListener('touchmove', e => {
+      if (isDragging === true) {
+        console.log("Touching...");
+        x = e.offsetX;
+        y = e.offsetY;
+      }
+    });
+    // When tapped
+    window.addEventListener('touchend', e => {
+      if (isDragging === true) {
+        console.log("Touching stopped");
+        x = 0;
+        y = 0;
+        isDragging = false;
+      }
+      if(e.clientX < (window.innerWidth - 100) 
+      && e.clientY < (window.innerHeight + 100)) { // make sure it's not Fullscreen button click
+        showDialog();
+      }
+    });     
+    
+    // When mouse clicked
+    window.addEventListener('mouseup', e => {
+      if (isDragging === true) {
+        console.log("Dragging stopped");
+        x = 0;
+        y = 0;
+        isDragging = false;
+      }
+      if(e.clientX < (window.innerWidth - 100) 
+      && e.clientY < (window.innerHeight + 100)) { // make sure it's not Fullscreen button click
+        showDialog();
+      }
+    }); 
+      
+    // Functions
+    // -- Show dialog box
+    function showDialog() {
+      blur();
+      pause();
+      var dialog = document.getElementById('dialog');
+      dialog.style.display = 'block';
+    }
+    /// -- Close dialog box
+    function closeDialog() {
+      var dialog = document.getElementById('dialog');
+      dialog.style.display = 'none';
+    }
+    // -- Blur the background
+    function blur() {
+      var blur = document.getElementById('blur');
+      blur.style.display = 'block';
+      blur.style.zIndex = 0;
+    }
+    // -- Unblur the background
+    function unblur() {
+      var blur = document.getElementById('blur');
+      blur.style.display =  'none';
+      blur.style.zIndex = -1;
+    }
+
+    // Init
+    setTime(0,10,0);
+
+    // On page load
+    draw();
+    window.drawInterval = setInterval(draw, 1000);
     
     // Start the countdown
     function start() {
@@ -458,6 +475,7 @@
     wakeLock();
 
     // Fullscreen
+    fullscreenOpen = false;
     var el = document.getElementsByTagName('body')[0];
     function openFullscreen() {
       if(el.requestFullscreen) {
@@ -466,11 +484,31 @@
         el.webkitRequestFullscreen();
       } else if(el.msRequestFullscreen) {
         el.msRequestFullscreen();
+      }
+    }
+    function closeFullscreen() {
+      if (document.exitFullscreen) {
+          document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
       }  
     }
     document.getElementById("fullscreenButton").onclick = function() {
-      console.log("openFullscreen()");
-      openFullscreen();
+      if(fullscreenOpen) {
+        console.log("closeFullscreen");
+        closeFullscreen();
+        fullscreenOpen = false;
+        document.getElementById('fullscreenButton').innerText = "OPEN FULLSCREEN"; 
+      } else {
+        console.log("openFullscreen()");
+        openFullscreen();
+        fullscreenOpen = true;
+        document.getElementById('fullscreenButton').innerText = "CLOSE FULLSCREEN"; 
+      }
     }
 
     // TODO 
