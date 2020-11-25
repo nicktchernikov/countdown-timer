@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/mystyles.css">
 
-    <!-- My Fonts --> 
+  <!-- My Fonts --> 
   <link rel="stylesheet" href="css/fixedFontStyles.css">
 
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -30,6 +30,7 @@
   <!-- My CSS --> 
   <style type="text/css">
     body {
+      font-family: 'Roboto', sans-serif;
       background-color: black;
     }
     .centered {
@@ -42,41 +43,43 @@
       -o-transform: translate(-50%, -50%);
       -ms-transform: translate(-50%, -50%);
     }
-    #main { 
+    #fullScreenButton {
+      font-family: 'Fixedsys Excelsior 3.01';
       color: white;
-      font-family: 'Roboto', sans-serif;
+      opacity: 50%;
+      padding: 10px; 
+      float: right;
+      cursor: pointer;
+    }
+    #goButton {
+      display: none;
     }
   </style>
   <meta name="theme-color" content="#fafafa">
 </head>
 
 <body>
-  <!-- Add your site or application content here -->
-  <script src="js/vendor/modernizr-3.11.3.min.js"></script>
-  <script src="js/app.js"></script>
 
-  <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
-  <script>
-    window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
-    ga('create', 'UA-XXXXX-Y', 'auto'); ga('set', 'anonymizeIp', true); ga('set', 'transport', 'beacon'); ga('send', 'pageview')
-  </script>
-  <script src="https://www.google-analytics.com/analytics.js" async></script>
+<!-- Add your site or application content here -->
+<script src="js/vendor/modernizr-3.11.3.min.js"></script>
+<script src="js/app.js"></script>
+
+<!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
+<script>
+  window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
+  ga('create', 'UA-XXXXX-Y', 'auto'); ga('set', 'anonymizeIp', true); ga('set', 'transport', 'beacon'); ga('send', 'pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
   
-  <!-- HTML --> 
-  <canvas id="canvas" class="centered"></canvas>
-
-  <!-- Javascript -->
-  <script>
-
-  </script>
-
+<!-- HTML --> 
+<canvas id="canvas" class="centered"></canvas>
+<div id="fullScreenButton">FULLSCREEN</div>
 <div id="blur"></div>
 
 <div id="dialog" class="centered">
   <div style="width: 100%; text-align: center; border: 0px solid white;"> 
     - SET TIME -
   </div>
-
   <div id="inputBox">
     <table id="inputTable"> 
       <tr>
@@ -91,7 +94,6 @@
       </tr>
     </table>
   </div>
-
   <div id="bottomMenu" class="centered">
     <div id="startButton">
       START
@@ -99,15 +101,13 @@
     <div id="cancelButton">
       CANCEL
     </div>
+    <form>
+      <input id="goButton" type="submit"></input>
+    </form>
   </div>
-<!-- 
-  <div id="startButton" class="centered">
-    CANCEL
-  </div> -->
+</div> <!-- /dialog -->
 
-</div>
-
-  <div id="infoMessage">Click/tap screen to set new start time</div>
+<div id="infoMessage">Click/tap screen to set new start time</div>
 
 </body>
 
@@ -363,8 +363,14 @@
           y = 0;
           isDragging = false;
         }
+        console.log(e.screenX, e.screenY, window.innerWidth, window.innerHeight);
+        
         // When mouse clicked
-        showDialog();
+        if(e.clientX < (window.innerWidth - 100) 
+        && e.clientY < (window.innerHeight + 100)) { // make sure it's not Fullscreen button click
+          console.log('passed');   
+          showDialog();
+        }
       }); 
 
       function showDialog() {
@@ -397,7 +403,8 @@
       draw();
       window.drawInterval = setInterval(draw, 1000);
     
-    document.getElementById('startButton').onclick = function() {
+    // Start the countdown
+    function start() {
       var hoursInput = document.getElementById('hoursInput').value;
       var minutesInput = document.getElementById('minutesInput').value;
       var secondsInput = document.getElementById('secondsInput').value;
@@ -411,8 +418,8 @@
       } else {
         if(hoursInput || minutesInput || secondsInput) {
           setTime(parseInt(hoursInput), parseInt(minutesInput), parseInt(secondsInput));
-          draw();
         }
+        draw();
         unblur();
         closeDialog();
         resume();
@@ -423,8 +430,22 @@
       unblur();
       closeDialog();
       resume();
+    }    
+    document.getElementById('startButton').onclick = function() {
+      start();
     }
+    // Android Go Button
+    document.getElementById('goButton').onclick = function() {
+      start();
+    }
+    // Enter key
+    window.addEventListener('keyup', function(event) {
+      if(event.keyCode === 13) {
+        start();
+      }
+    });
 
+    // Stop the screen from timing out
     async function wakeLock() {
       try {
         const wakeLock = await navigator.wakeLock.request('screen');
@@ -436,8 +457,20 @@
     }
     wakeLock();
 
+    // Fullscreen
+    var el = document.getElementsByTagName('body')[0];
+    function openFullscreen() {
+      if(el.requestFullscreen) {
+        el.requestFullscreen();
+      } else if(el.webkitRequestFullscreen) {
+        el.webkitRequestFullscreen();
+      } else if(el.msRequestFullscreen) {
+        el.msRequestFullscreen();
+      }
+    }
+
     // TODO 
-    // * ENTER key to start countdown
+    // * [done] ENTER key to start countdown
     // * GO Button on Mobile to start countdown
     // * Persistence of countdown time if user leaves/comes back
     // * Set an actual clock with actual time
