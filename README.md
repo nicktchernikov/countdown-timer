@@ -1,12 +1,12 @@
 # About
-Countdown timer written in HTML 5 and JavaScript
+Responsive 7-Segment countdown timer written in HTML/vanilla JavaScript
 
 # TODO 
 * [done] ENTER key to start countdown
 * [done] GO Button on Mobile to start countdown
-* Persistence of countdown time if user leaves/comes back
 * [done] Prevent screen from turning off (?)
 * [done] Full screen mode
+* Persistence of current countdown time if user closes and reopens a tab
 * Add labels
 * Add ability to add a sequence of timers that automatically start
     - e.g. 
