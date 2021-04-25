@@ -7,7 +7,6 @@ Responsive 7-Segment countdown timer written in HTML/vanilla JavaScript
 * [done] Prevent screen from turning off (?)
 * [done] Full screen mode
 * Persistence of current countdown time if user closes and reopens a tab
-* Add labels
 * Add ability to add a sequence of timers that automatically start
     - e.g. 
         Pomodoro method: 
